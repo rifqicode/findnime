@@ -9,9 +9,18 @@
   function scrapping() {
 
     let row = parseInt(document.getElementById('row').value),
-        table = document.getElementById('table').getElementsByTagName('tbody')[0];
+        table = document.getElementById('table').getElementsByTagName('tbody')[0],
+        crawlmessage = document.getElementById('crawl-message');
 
     if (row > 0) {
+
+      crawlmessage.classList.add("show");
+
+      if (table.rows.length > 0) {
+        for (var i = 0; i < table.rows.length; i++) {
+          table.deleteRow(i);
+        }
+      }
 
       var {PythonShell} = require("python-shell"),
           path = require("path"),
@@ -31,16 +40,15 @@
             no++;
             let parse = value.split('--');
 
-            let index = table.rows.length + 1
             var row = table.insertRow(0);
 
-            var cell1 = row.insertCell(0);
+            var cell = row.insertCell(0);
             var cell2 = row.insertCell(1);
-            var cell3 = row.insertCell(2);
 
-            cell1.innerHTML = no;
-            cell2.innerHTML = parse[0];
-            cell3.innerHTML = parse[1];
+            cell.innerHTML = parse[0];
+            cell2.innerHTML = parse[1];
+
+            crawlmessage.classList.remove("show");
         });
       });
 

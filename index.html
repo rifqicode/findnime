@@ -2,26 +2,38 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <title>FindNime!</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
+  <style media="screen">
+    .hide {
+      display: none
+    }
+
+    .show {
+      display: block;
+    }
+
+  </style>
+
   <body>
 
     <div class="jumbotron">
       <div class="container">
         <h1 class="display-3">- FINDNIME -</h1>
-        <p>Gudang nya Link Anime</p>
+        <p>Crawl Link Anime</p>
+        <h7>Sumber dari Samehadaku.net</h7>
       </div>
     </div>
 
-    <div class="container">
+    <div class="container" id="container">
       <!-- Example row of columns -->
       <div class="row">
         <div class="col-md-12">
             <div style="position:relative;" class="col-md-6">
-              <span> Masukan Jumlah Baris Yang Akan Didownload Per Halaman (max:14) </span>
+              <span> Masukan Jumlah Anime Yang Akan Didownload (max:14) </span>
               <input type="number" class="form-control" name="row" id="row" max="3" onkeyup="validate_row()">
             </div>
 
@@ -34,12 +46,12 @@
         </div>
       </div>
 
+      <h5 id="crawl-message" class="hide"> loading .... </h5>
       <hr>
 
       <div class="col-md-12">
         <table class="table table-bordered table-striped" id="table">
           <thead>
-            <th width="10">No</th>
             <th width="50">Nama Anime</th>
             <th width="100">Link</th>
           </thead>
