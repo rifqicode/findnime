@@ -4,11 +4,11 @@ import sys
 from bs4 import BeautifulSoup
 import requests
 import json
-import urllib2
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
 from time import sleep
 
 def writeFile(filename , text):
@@ -26,12 +26,16 @@ def post(url , datas):
     return requests.request("POST", url, data=datas, headers=headers)
 
 
+chrome_options = Options()
+chrome_options.add_argument("--headless")
+
 website = requests.get('https://www.samehada.tv/')
 if website.status_code == 200:
     websiteContent = BeautifulSoup(website.content , 'html.parser')
     divContent = websiteContent.find(class_="updateanime").find_all(class_="entry-title")
 
-    for l in divContent[0:1]:
+    for l in divContent[0:12]:
+        anime_name = l.get_text()
         link = l.find('a').get('href');
 
         # jump into it
@@ -45,23 +49,19 @@ if website.status_code == 200:
             if popup_1.status_code == 200:
                 popup_1_content = BeautifulSoup(popup_1.content , 'html.parser')
 
-                driver = webdriver.Chrome()
+                driver = webdriver.Chrome(options=chrome_options)
                 driver.get(downloadListGetFormat)
+                try:
+                    wait = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "showlink")))
+                    driver.execute_script('changeLink()')
+                    driver.close()
+                finally:
+                    driver.switch_to.window(driver.window_handles[0])
 
-                WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "showlink")))
-                driver.execute_script('changeLink()')
-
-                popup_2 = requests.get(driver.current_url);
-                driver.close()
-
-                if popup_2.status_code == 200:
-                    popup_2_content = BeautifulSoup(popup_2.content , 'html.parser')
-                    jump2 = popup_2_content.find(class_="download-link"),find('a').get('href')
-
-                    popup_3 = requests.get(jump2)
-                    if jump3.status_code == 200:
-                        popup_3_content = BeautifulSoup(popup_3.content , 'html.parser')
-
-
-                # exit()
-                # writeFile('index.html' , str(go))
+                    try:
+                        downloadLink = driver.find_element_by_xpath("//div[@class='download-link']").find_element_by_tag_name('a').get_attribute('href')
+                    finally:
+                        # write into file
+                        write = anime_name + " : \n" + str(downloadLink) + "\n"
+                        writeFile('anime_list.txt' , str(write))
+                        driver.quit()
